@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Craftr — Build the discipline you've always wanted.</title>
+  <meta name="description" content="Craftr is a performance self-tracking app for habits, workouts, and daily discipline. Built for people who show up every day.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0A0A0A">
+  <link rel="canonical" href="https://craftr.app">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Craftr — Build the discipline you've always wanted.">
+  <meta property="og:description" content="Track habits, log workouts, measure your daily discipline. Craftr is a performance self-tracking app built for people who take self-improvement seriously.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://craftr.app">
+  <meta property="og:image" content="https://craftr.app/og.png">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Craftr — Build the discipline you've always wanted.">
+  <meta name="twitter:description" content="Track habits, log workouts, measure your daily discipline.">
+  <!-- Favicon SVG data URI -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' stroke='white' stroke-width='2' fill='none' stroke-linecap='round' stroke-dasharray='57 24'/%3E%3Ccircle cx='16' cy='16' r='2' fill='white'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' stroke='white' stroke-width='2' fill='none' stroke-linecap='round' stroke-dasharray='57 24'/%3E%3Ccircle cx='16' cy='16' r='2' fill='white'/%3E%3C/svg%3E">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ─── CSS Reset ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body { 
+      font-family: 'Geist', 'Inter', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    img, svg { display: block; max-width: 100%; }
+    button { font-family: inherit; }
+    a { color: inherit; }
+
+    /* ─── CSS Tokens ─── */
+    :root {
+      --bg:             #0A0A0A;
+      --bg-card:        #111111;
+      --bg-card-hover:  #161616;
+      --bg-surface:     #141414;
+      --bg-deep:        #0D0D0D;
+      --text-primary:   #F7F7F7;
+      --text-secondary: #A1A1AA;
+      --text-muted:     #7C7C84; /* Increased contrast to pass WCAG AA (>4.5:1 on #0A0A0A) */
+      --text-faint:     #4E4E54; /* Increased contrast for faints as well */
+      --border:         rgba(255,255,255,0.07);
+      --border-strong:  rgba(255,255,255,0.13);
+      --border-focus:   rgba(255,255,255,0.5);
+      --accent:         #FFFFFF;
+      --ease-apple:     cubic-bezier(0.25, 0.1, 0.25, 1.0);
+      --max-width:      1280px;
+      --content-width:  1140px;
+      --side-pad:       clamp(24px, 8vw, 120px);
+      --section-gap:    clamp(80px, 12vw, 160px);
+      --card-radius:    16px;
+      --button-radius:  10px;
+      --input-radius:   10px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 88px; /* nav height + buffer */
+    }
+
+    /* ─── Focus Styles ─── */
+    :focus-visible {
+      outline: 2px solid rgba(255,255,255,0.55);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* ─── Accessibility ─── */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      clip: rect(0, 0, 0, 0);
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    /* ─── Utility ─── */
+    .container {
+      max-width: var(--content-width);
+      margin: 0 auto;
+      padding-left: var(--side-pad);
+      padding-right: var(--side-pad);
+    }
+
+    /* ─── Typography ─── */
+    .hero-title {
+      font-size: clamp(58px, 8.5vw, 100px);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 0.92;
+    }
+
+    .section-heading {
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 700;
+      letter-spacing: -0.028em;
+      line-height: 0.96;
+      color: var(--text-primary);
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      color: var(--text-primary);
+    }
+
+    .body-text {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .footnote {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .mono-data {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum";
+    }
+
+    /* ─── Buttons ─── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #F7F7F7;
+      color: #0A0A0A;
+      border: none;
+      border-radius: var(--button-radius);
+      height: 50px;
+      padding: 0 26px;
+      font: 600 15px/1 'Geist', sans-serif;
+      letter-spacing: 0.025em;
+      cursor: pointer;
+      transition: transform 150ms var(--ease-apple), box-shadow 150ms var(--ease-apple), opacity 150ms var(--ease-apple);
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      color: #F7F7F7;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: var(--button-radius);
+      height: 50px;
+      padding: 0 26px;
+      font: 500 15px/1 'Geist', sans-serif;
+      cursor: pointer;
+      transition: border-color 150ms var(--ease-apple), background 150ms var(--ease-apple);
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(255, 255, 255, 0.38);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    /* ─── Navigation ─── */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 68px;
+      z-index: 100;
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      transition: background 250ms var(--ease-apple), backdrop-filter 250ms var(--ease-apple), border-color 250ms var(--ease-apple);
+    }
+
+    .nav.scrolled {
+      background: rgba(10, 10, 10, 0.88);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .nav-logo-icon {
+      width: 28px;
+      height: 28px;
+    }
+
+    .nav-logo-text {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .nav .btn-primary {
+      height: 38px;
+      padding: 0 16px;
+      font-size: 14px;
+    }
+
+    /* ─── Page Load Transitions ─── */
+    .anim-nav {
+      opacity: 0;
+      transition: opacity 300ms var(--ease-apple);
+    }
+    .anim-mark {
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 600ms var(--ease-apple), transform 600ms var(--ease-apple);
+      transition-delay: 80ms;
+    }
+    .anim-headline {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 800ms var(--ease-apple), transform 800ms var(--ease-apple);
+      transition-delay: 180ms;
+    }
+    .anim-sub {
+      opacity: 0;
+      transition: opacity 700ms var(--ease-apple);
+      transition-delay: 360ms;
+    }
+    .anim-cta {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 600ms var(--ease-apple), transform 600ms var(--ease-apple);
+      transition-delay: 500ms;
+    }
+
+    .loaded .anim-nav,
+    .loaded .anim-sub {
+      opacity: 1;
+    }
+    .loaded .anim-mark,
+    .loaded .anim-headline,
+    .loaded .anim-cta {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── Scroll Reveals ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 600ms var(--ease-apple), transform 600ms var(--ease-apple);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── Hero Section ─── */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      padding-top: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.025;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, transparent 80%);
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, transparent 80%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 860px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-mark-svg {
+      width: 52px;
+      height: 52px;
+      color: var(--text-primary);
+      margin-bottom: 40px;
+    }
+
+    .hero-headline span {
+      display: block;
+    }
+
+    .hero-subheadline {
+      max-width: 520px;
+      margin: 32px auto 0;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 44px;
+      flex-wrap: wrap;
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: indicator-pulse 2s infinite;
+      animation-delay: 1.2s;
+      pointer-events: none;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 32px;
+      background: var(--border-strong);
+    }
+
+    .scroll-chevron {
+      width: 10px;
+      height: 6px;
+      color: var(--text-primary);
+    }
+
+    @keyframes indicator-pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.7; }
+    }
+
+    /* ─── Stats Strip ─── */
+    .stats {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 56px 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stat-cell {
+      text-align: center;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    .stat-cell:not(:last-child) {
+      border-right: 1px solid var(--border);
+    }
+
+    .stat-number {
+      font-size: clamp(42px, 5.5vw, 68px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .stat-suffix {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--text-muted);
+      max-width: 140px;
+      margin: 8px auto 0;
+    }
+
+    /* ─── Feature Section ─── */
+    .features {
+      padding: var(--section-gap) 0;
+    }
+
+    .features-header {
+      max-width: 680px;
+      margin-bottom: 80px;
+    }
+
+    .features-header .eyebrow {
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .features-header .body-text {
+      max-width: 480px;
+      margin-top: 20px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      padding: 48px;
+      transition: background 200ms var(--ease-apple);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .feature-card:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .feature-icon-wrapper {
+      margin-bottom: 32px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+    }
+
+    .feature-card .eyebrow {
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .feature-card .card-title {
+      margin-bottom: 12px;
+    }
+
+    .feature-card .body-text {
+      font-size: 16px;
+      color: var(--text-secondary);
+      flex-grow: 1;
+      margin-bottom: 40px;
+    }
+
+    /* Card 1 Accent */
+    .streak-dots-row {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .streak-circle {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--text-primary);
+    }
+
+    .streak-circle.empty {
+      opacity: 0.15;
+    }
+
+    /* Card 2 Accent */
+    .workout-mockup {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+
+    .mockup-exercise {
+      margin-bottom: 12px;
+    }
+
+    .mockup-exercise:last-child {
+      margin-bottom: 0;
+    }
+
+    .mockup-header {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .mockup-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .mockup-row:last-child {
+      border-bottom: none;
+    }
+
+    .pr-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-primary);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 4px;
+      padding: 1px 5px;
+    }
+
+    /* Card 3 Accent */
+    .score-accent {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .score-accent-val {
+      font-size: 56px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .score-accent-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .score-progress-container {
+      width: 100%;
+      height: 4px;
+      background: var(--border-strong);
+      border-radius: 2px;
+      margin-top: 16px;
+      overflow: hidden;
+    }
+
+    .score-progress-bar {
+      height: 100%;
+      background: var(--text-primary);
+      width: 82%;
+    }
+
+    /* Card 4 Accent */
+    .stat-pills {
+      display: flex;
+      gap: 12px;
+    }
+
+    .stat-pill {
+      flex: 1;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: left;
+    }
+
+    .pill-val {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .pill-lbl {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ─── How It Works ─── */
+    .system {
+      background: var(--bg-deep);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: clamp(80px, 12vw, 140px) 0;
+    }
+
+    .system .eyebrow {
+      display: block;
+      margin-bottom: 24px;
+    }
+
+    .system-heading {
+      margin-bottom: 64px;
+    }
+
+    .system-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 48px;
+      position: relative;
+    }
+
+    .system-step {
+      position: relative;
+    }
+
+    .step-index-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .step-index {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    .step-connector {
+      flex-grow: 1;
+      height: 1px;
+      border-top: 1px dashed var(--border);
+      margin-left: 16px;
+      margin-top: -1px;
+    }
+
+    .step-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .step-body {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+
+    /* ─── Manifesto Section ─── */
+    .manifesto {
+      padding: var(--section-gap) 0;
+    }
+
+    .manifesto-content {
+      max-width: 920px;
+      text-align: left;
+    }
+
+    .manifesto-heading {
+      font-size: clamp(34px, 5vw, 60px);
+      font-weight: 700;
+      letter-spacing: -0.028em;
+      line-height: 1.0;
+      color: var(--text-primary);
+    }
+
+    .manifesto-body {
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin-top: 36px;
+    }
+
+    .manifesto-rule {
+      border: none;
+      border-top: 1px solid var(--border);
+      width: 64px;
+      margin: 52px 0 28px;
+    }
+
+    .manifesto-closing {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ─── Download CTA ─── */
+    .download-cta {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      padding: clamp(80px, 12vw, 140px) 0;
+      text-align: center;
+    }
+
+    .download-cta-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .download-cta .eyebrow {
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .download-heading {
+      font-size: clamp(48px, 7vw, 88px);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 0.9;
+      color: var(--text-primary);
+    }
+
+    .download-subheadline {
+      margin-top: 24px;
+      max-width: 440px;
+    }
+
+    .email-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 40px;
+      width: 100%;
+    }
+
+    .email-input {
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      height: 50px;
+      padding: 0 18px;
+      font: 400 16px/1 'Geist', sans-serif;
+      color: var(--text-primary);
+      width: min(300px, 100%);
+      outline: none;
+      transition: border-color 200ms var(--ease-apple);
+    }
+
+    .email-input::placeholder {
+      color: var(--text-faint);
+    }
+
+    .email-input:focus {
+      border-color: var(--border-focus);
+    }
+
+    .email-input.shake {
+      animation: shake 400ms var(--ease-apple);
+    }
+
+    .success-msg {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 50px;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .email-footnote {
+      margin-top: 20px;
+      color: var(--text-faint);
+    }
+
+    /* ─── Footer ─── */
+    .footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text-secondary);
+      transition: color 150ms var(--ease-apple);
+    }
+
+    .footer-logo:hover {
+      color: var(--text-primary);
+    }
+
+    .footer-logo-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .footer-logo-text {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: var(--text-faint);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-link {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 150ms var(--ease-apple);
+    }
+
+    .footer-link:hover {
+      color: var(--text-primary);
+    }
+
+    /* ─── Responsiveness ─── */
+    @media (max-width: 1024px) {
+      .features-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .feature-card {
+        padding: 32px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .scroll-indicator {
+        display: none;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 40px;
+      }
+      .stat-cell:not(:last-child) {
+        border-right: none;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      .system-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .step-connector {
+        display: none;
+      }
+      .system-step {
+        padding-left: 24px;
+        border-left: 1px solid var(--border);
+      }
+      .footer-inner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .footer-copy {
+        order: 3;
+        margin-top: 8px;
+      }
+    }
+
+    /* ─── Reduced Motion ─── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      html {
+        scroll-behavior: auto !important;
+      }
+      .anim-nav, .anim-mark, .anim-headline, .anim-sub, .anim-cta {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .scroll-indicator {
+        animation: none !important;
+        opacity: 0.5;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ Navigation ═══ -->
+  <nav class="nav anim-nav" aria-label="Main">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="Craftr home">
+        <div class="nav-logo-icon">
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
+            <path d="M 16 3 A 13 13 0 1 0 27.26 9.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <rect x="21.5" y="1.74" width="2" height="6" fill="currentColor" transform="rotate(30 22.5 4.74)"/>
+            <circle cx="16" cy="16" r="2" fill="currentColor"/>
+          </svg>
+        </div>
+        <span class="nav-logo-text">Craftr</span>
+      </a>
+      <button class="btn-primary" onclick="window.location.href='download.html'">Download App</button>
+    </div>
+  </nav>
+
+  <!-- ═══ Main Content ═══ -->
+  <main>
+    
+    <!-- ═══ Hero Section ═══ -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <!-- Engineering grid pattern -->
+      <div class="hero-grid" aria-hidden="true">
+        <svg width="100%" height="100%">
+          <defs>
+            <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+              <path d="M 48 0 L 0 0 0 48" fill="none" stroke="white" stroke-width="0.5"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)"/>
+        </svg>
+      </div>
+
+      <div class="hero-content">
+        <!-- Centered SVG Logo Mark -->
+        <div class="hero-mark-svg anim-mark">
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
+            <path d="M 16 3 A 13 13 0 1 0 27.26 9.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <rect x="21.5" y="1.74" width="2" height="6" fill="currentColor" transform="rotate(30 22.5 4.74)"/>
+            <circle cx="16" cy="16" r="2" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <!-- Headline -->
+        <h1 id="hero-heading" class="hero-title anim-headline">
+          <span>Build the discipline</span>
+          <span>you've always</span>
+          <span>wanted.</span>
+        </h1>
+
+        <!-- Subheadline -->
+        <p class="hero-subheadline body-text anim-sub">
+          Craftr tracks the habits, workouts, and daily choices that separate who you are from who you want to be.
+        </p>
+
+        <!-- CTA Row -->
+        <div class="hero-cta-row anim-cta">
+          <button class="btn-primary" onclick="window.location.href='download.html'">Download App</button>
+          <button class="btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">See How It Works</button>
+        </div>
+      </div>
+
+      <!-- Scroll Indicator -->
+      <div class="scroll-indicator" aria-hidden="true">
+        <div class="scroll-line"></div>
+        <div class="scroll-chevron">
+          <svg viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M1 1l4 4 4-4"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Stats Strip ═══ -->
+    <section class="stats reveal" aria-label="Quick stats">
+      <div class="container stats-grid">
+        <div class="stat-cell">
+          <div class="stat-number mono-data"><span data-count="66">0</span><span class="stat-suffix"> days</span></div>
+          <div class="stat-label">Average time to form a lasting habit</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-number mono-data">&times;2.4</div>
+          <div class="stat-label">More likely to succeed when you track progress</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-number mono-data"><span data-count="100">0</span><span class="stat-suffix">%</span></div>
+          <div class="stat-label">Private. Your data never leaves your device</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-number mono-data">Day 1</div>
+          <div class="stat-label">Is always the hardest. Start today</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Features Section ═══ -->
+    <section class="features" id="features" aria-labelledby="features-heading">
+      <div class="container">
+        
+        <div class="features-header reveal">
+          <span class="eyebrow">WHAT YOU TRACK</span>
+          <h2 id="features-heading" class="section-heading">
+            Every metric that<br>moves the needle.
+          </h2>
+          <p class="body-text">
+            Most tracking apps give you data without context. Craftr shows you patterns — the ones that actually drive progress over months and years.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Block 1 — Habit Tracking -->
+          <div class="feature-card reveal" style="transition-delay: 0ms;">
+            <div class="feature-icon-wrapper" aria-hidden="true">
+              <svg width="64" height="42" viewBox="0 0 60 42" fill="none">
+                <!-- 7 columns × 5 rows of squares (6x6px each, 3px gap) -->
+                <!-- Row 1 -->
+                <rect x="0" y="0" width="6" height="6" fill="currentColor"/>
+                <rect x="9" y="0" width="6" height="6" fill="currentColor"/>
+                <rect x="18" y="0" width="6" height="6" fill="currentColor"/>
+                <rect x="27" y="0" width="6" height="6" fill="currentColor"/>
+                <rect x="36" y="0" width="6" height="6" fill="currentColor" opacity="0.12"/>
+                <rect x="45" y="0" width="6" height="6" fill="currentColor"/>
+                <rect x="54" y="0" width="6" height="6" fill="currentColor"/>
+                <!-- Row 2 -->
+                <rect x="0" y="9" width="6" height="6" fill="currentColor"/>
+                <rect x="9" y="9" width="6" height="6" fill="currentColor"/>
+                <rect x="18" y="9" width="6" height="6" fill="currentColor" opacity="0.12"/>
+                <rect x="27" y="9" width="6" height="6" fill="currentColor"/>
+                <rect x="36" y="9" width="6" height="6" fill="currentColor"/>
+                <rect x="45" y="9" width="6" height="6" fill="currentColor"/>
+                <rect x="54" y="9" width="6" height="6" fill="currentColor"/>
+                <!-- Row 3 -->
+                <rect x="0" y="18" width="6" height="6" fill="currentColor"/>
+                <rect x="9" y="18" width="6" height="6" fill="currentColor"/>
+                <rect x="18" y="18" width="6" height="6" fill="currentColor"/>
+                <rect x="27" y="18" width="6" height="6" fill="currentColor"/>
+                <rect x="36" y="18" width="6" height="6" fill="currentColor"/>
+                <rect x="45" y="18" width="6" height="6" fill="currentColor" opacity="0.12"/>
+                <rect x="54" y="18" width="6" height="6" fill="currentColor"/>
+                <!-- Row 4 -->
+                <rect x="0" y="27" width="6" height="6" fill="currentColor"/>
+                <rect x="9" y="27" width="6" height="6" fill="currentColor" opacity="0.12"/>
+                <rect x="18" y="27" width="6" height="6" fill="currentColor"/>
+                <rect x="27" y="27" width="6" height="6" fill="currentColor"/>
+                <rect x="36" y="27" width="6" height="6" fill="currentColor"/>
+                <rect x="45" y="27" width="6" height="6" fill="currentColor"/>
+                <rect x="54" y="27" width="6" height="6" fill="currentColor"/>
+                <!-- Row 5 -->
+                <rect x="0" y="36" width="6" height="6" fill="currentColor"/>
+                <rect x="9" y="36" width="6" height="6" fill="currentColor"/>
+                <rect x="18" y="36" width="6" height="6" fill="currentColor"/>
+                <rect x="27" y="36" width="6" height="6" fill="currentColor" opacity="0.12"/>
+                <rect x="36" y="36" width="6" height="6" fill="currentColor" opacity="0.12"/>
+                <rect x="45" y="36" width="6" height="6" fill="currentColor"/>
+                <rect x="54" y="36" width="6" height="6" fill="currentColor"/>
+              </svg>
+            </div>
+            <span class="eyebrow">HABITS</span>
+            <h3 class="card-title">Build streaks that compound.</h3>
+            <p class="body-text">
+              Track any habit — sleep, reading, cold exposure, meditation, movement. Craftr visualizes your consistency as a heatmap that grows with you. A 90-day streak looks radically different from a 7-day streak. That visual difference is the motivation.
+            </p>
+            <div class="feature-accent">
+              <div class="streak-dots-row" aria-hidden="true">
+                <!-- 9 filled, 3 unfilled -->
+                <div class="streak-circle"></div>
+                <div class="streak-circle"></div>
+                <div class="streak-circle"></div>
+                <div class="streak-circle"></div>
+                <div class="streak-circle"></div>
+                <div class="streak-circle"></div>
+                <div class="streak-circle"></div>
+                <div class="streak-circle"></div>
+                <div class="streak-circle"></div>
+                <div class="streak-circle empty"></div>
+                <div class="streak-circle empty"></div>
+                <div class="streak-circle empty"></div>
+              </div>
+              <p class="footnote mono-data">9-day streak &middot; longest: 34 days</p>
+            </div>
+          </div>
+
+          <!-- Block 2 — Workout Log -->
+          <div class="feature-card reveal" style="transition-delay: 80ms;">
+            <div class="feature-icon-wrapper" aria-hidden="true">
+              <svg width="48" height="28" viewBox="0 0 48 28" fill="none">
+                <rect x="0" y="4" width="48" height="3" fill="currentColor"/>
+                <rect x="0" y="12" width="36" height="3" fill="currentColor"/>
+                <rect x="0" y="20" width="22" height="3" fill="currentColor"/>
+              </svg>
+            </div>
+            <span class="eyebrow">WORKOUTS</span>
+            <h3 class="card-title">Log sets, reps, and weight. See PRs automatically.</h3>
+            <p class="body-text">
+              Hevy-inspired workout entry. Add exercises, sets, and weight in seconds. Craftr detects personal records automatically and surfaces them without celebration — just data.
+            </p>
+            <div class="feature-accent">
+              <div class="workout-mockup">
+                <div class="mockup-exercise">
+                  <div class="mockup-header">Bench Press</div>
+                  <div class="mockup-row mono-data">
+                    <span>Set 1</span>
+                    <span>80 kg</span>
+                    <span>&times;8</span>
+                    <span class="footnote">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10003;</span>
+                  </div>
+                  <div class="mockup-row mono-data">
+                    <span>Set 2</span>
+                    <span>80 kg</span>
+                    <span>&times;8</span>
+                    <span class="footnote">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10003;</span>
+                  </div>
+                  <div class="mockup-row mono-data">
+                    <span>Set 3</span>
+                    <span>82.5 kg</span>
+                    <span>&times;6</span>
+                    <span class="pr-badge">PR</span>
+                  </div>
+                </div>
+                <div class="mockup-exercise" style="margin-top: 14px;">
+                  <div class="mockup-header">Deadlift</div>
+                  <div class="mockup-row mono-data">
+                    <span>Set 1</span>
+                    <span>120 kg</span>
+                    <span>&times;5</span>
+                    <span class="footnote">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10003;</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Block 3 — Daily Score -->
+          <div class="feature-card reveal" style="transition-delay: 160ms;">
+            <div class="feature-icon-wrapper" aria-hidden="true">
+              <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                <!-- Background track -->
+                <circle cx="28" cy="28" r="23" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"/>
+                <!-- 82% arc -->
+                <circle cx="28" cy="28" r="23" stroke="currentColor" stroke-width="3" fill="none"
+                  stroke-dasharray="118.5 26"
+                  stroke-dashoffset="0"
+                  stroke-linecap="round"
+                  transform="rotate(-90 28 28)"/>
+                <circle cx="28" cy="28" r="3" fill="currentColor"/>
+              </svg>
+            </div>
+            <span class="eyebrow">DAILY SCORE</span>
+            <h3 class="card-title">Your discipline, quantified.</h3>
+            <p class="body-text">
+              Craftr calculates a daily score based on completed habits, workout consistency, and self-reported sleep. Not a gamified streak counter — a signal. High scores correlate with progress. Low scores show you where to focus.
+            </p>
+            <div class="feature-accent score-accent">
+              <div class="score-accent-val mono-data">82</div>
+              <div class="score-accent-label mono-data">Today's score &middot; 7-day avg: 76</div>
+              <div class="score-progress-container" aria-hidden="true">
+                <div class="score-progress-bar"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Block 4 — Progress Timeline -->
+          <div class="feature-card reveal" style="transition-delay: 240ms;">
+            <div class="feature-icon-wrapper" aria-hidden="true">
+              <svg width="80" height="36" viewBox="0 0 80 36" fill="none">
+                <path d="M 5 30 L 22 24 L 39 27 L 56 18 L 73 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="5" cy="30" r="3" fill="currentColor"/>
+                <circle cx="22" cy="24" r="3" fill="currentColor"/>
+                <circle cx="39" cy="27" r="3" fill="currentColor"/>
+                <circle cx="56" cy="18" r="3" fill="currentColor"/>
+                <circle cx="73" cy="10" r="3" fill="currentColor"/>
+              </svg>
+            </div>
+            <span class="eyebrow">PROGRESS</span>
+            <h3 class="card-title">Months of effort, visible at a glance.</h3>
+            <p class="body-text">
+              Weekly and monthly rollups show your trend over time. Craftr doesn't reward you with badges. It shows you a graph. The graph either goes up or it doesn't.
+            </p>
+            <div class="feature-accent">
+              <div class="stat-pills" aria-hidden="true">
+                <div class="stat-pill">
+                  <div class="pill-val mono-data">+14%</div>
+                  <div class="pill-lbl">vol/wk</div>
+                </div>
+                <div class="stat-pill">
+                  <div class="pill-val mono-data">23</div>
+                  <div class="pill-lbl">habits</div>
+                </div>
+                <div class="stat-pill">
+                  <div class="pill-val mono-data">6.2h</div>
+                  <div class="pill-lbl">avg sleep</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══ How It Works Section ═══ -->
+    <section class="system" aria-labelledby="system-heading">
+      <div class="container">
+        <span class="eyebrow">THE SYSTEM</span>
+        <h2 id="system-heading" class="section-heading system-heading">
+          Three inputs.<br>One direction.
+        </h2>
+
+        <div class="system-grid">
+          <!-- Step 1 -->
+          <div class="system-step reveal">
+            <div class="step-index-row">
+              <span class="step-index">01</span>
+              <div class="step-connector" aria-hidden="true"></div>
+            </div>
+            <h3 class="step-title">Log your day</h3>
+            <p class="step-body">Add completed habits and workouts in under 60 seconds. Craftr is built for speed — no configuration, no friction.</p>
+          </div>
+          <!-- Step 2 -->
+          <div class="system-step reveal" style="transition-delay: 80ms;">
+            <div class="step-index-row">
+              <span class="step-index">02</span>
+              <div class="step-connector" aria-hidden="true"></div>
+            </div>
+            <h3 class="step-title">See your patterns</h3>
+            <p class="step-body">Your data surfaces trends automatically. Which habits drive your score. Which workouts you skip. What your best weeks have in common.</p>
+          </div>
+          <!-- Step 3 -->
+          <div class="system-step reveal" style="transition-delay: 160ms;">
+            <div class="step-index-row">
+              <span class="step-index">03</span>
+            </div>
+            <h3 class="step-title">Adjust and repeat</h3>
+            <p class="step-body">No advice. No coaching. Just clear signal. You decide what to change. Craftr tracks whether it worked.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Manifesto Section ═══ -->
+    <section class="manifesto" aria-labelledby="manifesto-heading">
+      <div class="container">
+        <div class="manifesto-content reveal">
+          <h2 id="manifesto-heading" class="manifesto-heading">
+            Most people fail not from<br>lack of effort —<br>but lack of a system.
+          </h2>
+          <p class="manifesto-body">
+            Craftr gives you the structure. You provide the work.<br>No motivation hacks. No gamification. Just signal.
+          </p>
+          <hr class="manifesto-rule" aria-hidden="true">
+          <p class="manifesto-closing">Built for the long game.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Download / Early Access Section ═══ -->
+    <section class="download-cta" id="download" aria-labelledby="download-section-heading">
+      <div class="container download-cta-inner">
+        <span class="eyebrow reveal">EARLY ACCESS</span>
+        <h2 id="download-section-heading" class="download-heading reveal">Be first.</h2>
+        <p class="download-subheadline body-text reveal">
+          Craftr is in final development. Leave your email — one message when it ships. Nothing else.
+        </p>
+        
+        <div class="email-row reveal" id="email-form" role="form" aria-label="Email signup">
+          <label for="emailInput" class="sr-only">Email address</label>
+          <input type="email" id="emailInput" class="email-input" placeholder="your@email.com" autocomplete="email">
+          <button class="btn-primary" onclick="submitEmail()" type="button">Notify Me</button>
+        </div>
+        <p class="email-footnote footnote reveal">No newsletters. No marketing. One email when Craftr is available.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══ Footer ═══ -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <a href="index.html" class="footer-logo" aria-label="Craftr home">
+        <div class="footer-logo-icon">
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
+            <path d="M 16 3 A 13 13 0 1 0 27.26 9.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <rect x="21.5" y="1.74" width="2" height="6" fill="currentColor" transform="rotate(30 22.5 4.74)"/>
+            <circle cx="16" cy="16" r="2" fill="currentColor"/>
+          </svg>
+        </div>
+        <span class="footer-logo-text">Craftr</span>
+      </a>
+      <span class="footer-copy">© 2025 Craftr</span>
+      <div class="footer-links">
+        <a href="index.html" class="footer-link">Privacy</a>
+        <a href="index.html" class="footer-link">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      /* ─── Check Reduced Motion ─── */
+      var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* ─── Trigger Page Load Classes ─── */
+      document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add('loaded');
+      });
+
+      /* ─── Nav Scroll Treatment ─── */
+      var nav = document.querySelector('.nav');
+      var scrolled = false;
+
+      function checkScroll() {
+        var isScrolled = window.scrollY > 60;
+        if (isScrolled !== scrolled) {
+          scrolled = isScrolled;
+          nav.classList.toggle('scrolled', scrolled);
+        }
+      }
+      window.addEventListener('scroll', checkScroll, { passive: true });
+      checkScroll();
+
+      /* ─── Scroll Reveal Observer ─── */
+      if (!reducedMotion && 'IntersectionObserver' in window) {
+        var revealObserver = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll('.reveal').forEach(function(el) {
+          revealObserver.observe(el);
+        });
+      } else {
+        document.querySelectorAll('.reveal').forEach(function(el) {
+          el.classList.add('visible');
+        });
+      }
+
+      /* ─── Stats Count-up Animation ─── */
+      var statsSection = document.querySelector('.stats');
+      var statsAnimated = false;
+
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      function runCountUp(el, target, duration) {
+        var start = performance.now();
+        function update(now) {
+          var progress = Math.min((now - start) / duration, 1);
+          var eased = easeOutCubic(progress);
+          el.textContent = Math.round(eased * target);
+          if (progress < 1) {
+            requestAnimationFrame(update);
+          } else {
+            el.textContent = target;
+          }
+        }
+        requestAnimationFrame(update);
+      }
+
+      if (!reducedMotion && statsSection && 'IntersectionObserver' in window) {
+        var statsObserver = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting && !statsAnimated) {
+              statsAnimated = true;
+              document.querySelectorAll('[data-count]').forEach(function(el) {
+                var target = parseInt(el.getAttribute('data-count'), 10);
+                runCountUp(el, target, 1400);
+              });
+              statsObserver.unobserve(statsSection);
+            }
+          });
+        }, { threshold: 0.3 });
+        statsObserver.observe(statsSection);
+      } else {
+        document.querySelectorAll('[data-count]').forEach(function(el) {
+          el.textContent = el.getAttribute('data-count');
+        });
+      }
+    })();
+
+    /* ─── Early Access Email Submit ─── */
+    function submitEmail() {
+      var input = document.getElementById('emailInput');
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(input.value)) {
+        input.style.borderColor = 'rgba(255,255,255,0.35)';
+        input.classList.add('shake');
+        setTimeout(function() {
+          input.classList.remove('shake');
+          input.style.borderColor = '';
+        }, 400);
+        return;
+      }
+      var row = input.closest('.email-row');
+      row.innerHTML = '<p class="success-msg">✦ &nbsp; You\'re on the list.</p>';
+    }
+  </script>
+</body>
+</html>
